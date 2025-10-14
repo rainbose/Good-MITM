@@ -33,10 +33,10 @@ impl CertificateAuthority {
     pub fn gen_ca() -> Result<Certificate, RcgenError> {
         let mut params = CertificateParams::default();
         let mut distinguished_name = DistinguishedName::new();
-        distinguished_name.push(DnType::CommonName, "Good-MITM");
-        distinguished_name.push(DnType::OrganizationName, "Good-MITM");
-        distinguished_name.push(DnType::CountryName, "CN");
-        distinguished_name.push(DnType::LocalityName, "CN");
+        distinguished_name.push(DnType::CommonName, "mdca@md-dev");
+        distinguished_name.push(DnType::OrganizationName, "MDCA");
+        distinguished_name.push(DnType::CountryName, "US");
+        distinguished_name.push(DnType::LocalityName, "US");
         params.distinguished_name = distinguished_name;
         params.key_usages = vec![
             KeyUsagePurpose::DigitalSignature,
