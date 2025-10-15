@@ -1,11 +1,9 @@
-FROM --platform=$BUILDPLATFORM rust:1.61.0-buster AS build
-
+FROM --platform=$BUILDPLATFORM rust:1.61.0-bullseye AS build
 ARG TARGETARCH
 
 RUN apt-get update && apt-get install -y build-essential curl musl-tools upx pkg-config libssl-dev
 
 WORKDIR /root/good-mitm
-
 ADD . .
 
 RUN rustup install nightly && rustup default nightly && \
@@ -31,6 +29,5 @@ RUN rustup install nightly && rustup default nightly && \
     upx -9 target/release/good-mitm
 
 FROM alpine:3.14 AS good-mitm
-
 COPY --from=build /root/good-mitm/target/release/good-mitm /usr/bin
 ENTRYPOINT [ "good-mitm" ]
