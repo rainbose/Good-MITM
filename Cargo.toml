@@ -33,10 +33,6 @@ tokio = { version = "1", features = ["rt-multi-thread", "signal"] }
 rustls = "0.21"
 trust_cert = { path = "crates/trust_cert", optional = true }
 
-# 添加这部分 - 强制使用新版本的 time crate
-[patch.crates-io]
-time = { version = "0.3.36" }
-
 [features]
 default = []
 trust-cert = ["dep:trust_cert"]
