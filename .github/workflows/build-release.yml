@@ -21,19 +21,27 @@ jobs:
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       - name: Install dependences
-        run: sudo apt-get update -y && sudo apt-get install -y upx;
+        run: sudo apt-get update -y && sudo apt-get install -y upx
       
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          profile: minimal
-          target: ${{ matrix.target }}
-          toolchain: nightly
-          default: true
-          override: true
+          targets: ${{ matrix.target }}
+      
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
       
       - name: Generate Cargo.lock
         run: cargo generate-lockfile
@@ -55,7 +63,7 @@ jobs:
           ./build/build-release.sh -t ${{ matrix.target }} $compile_features $compile_compress
       
       - name: Upload Github Assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -73,7 +81,7 @@ jobs:
           - x86_64-apple-darwin
           - aarch64-apple-darwin
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       - name: Install Dependences
         if: runner.os == 'macOS'
@@ -82,13 +90,21 @@ jobs:
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
       
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          profile: minimal
-          target: ${{ matrix.target }}
-          toolchain: nightly
-          default: true
-          override: true
+          targets: ${{ matrix.target }}
+      
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
       
       - name: Generate Cargo.lock
         run: cargo generate-lockfile
@@ -99,7 +115,7 @@ jobs:
           ./build/build-host-release.sh -t ${{ matrix.target }}
       
       - name: Upload Github Assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
