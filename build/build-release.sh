@@ -56,16 +56,29 @@ function build() {
     RELEASE_DIR="target/${TARGET}/release"
     TARGET_FEATURES="${features[@]}"
 
+    # 检测是否需要交叉编译
+    # 获取当前主机架构
+    HOST_ARCH=$(rustc -Vv | grep 'host:' | awk '{print $2}')
+
+    # 如果目标平台与主机相同，使用 cargo；否则使用 cross
+    if [[ "$TARGET" == "$HOST_ARCH" ]] || [[ "$TARGET" == "x86_64-unknown-linux-gnu" && "$HOST_ARCH" == "x86_64"* ]]; then
+        BUILD_CMD="cargo"
+        echo "* Using native cargo for ${TARGET}"
+    else
+        BUILD_CMD="cross"
+        echo "* Using cross for ${TARGET}"
+    fi
+
     if [[ "${TARGET_FEATURES}" != "" ]]; then
         echo "* Building ${TARGET} package ${VERSION} with features \"${TARGET_FEATURES}\" ..."
 
-        cross build --target "${TARGET}" \
+        $BUILD_CMD build --target "${TARGET}" \
                     --features "${TARGET_FEATURES}" \
                     --release
     else
         echo "* Building ${TARGET} package ${VERSION} ..."
 
-        cross build --target "${TARGET}" \
+        $BUILD_CMD build --target "${TARGET}" \
                     --release
     fi
 
