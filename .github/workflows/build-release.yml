@@ -42,12 +42,17 @@ jobs:
         with:
           path: ~/.cargo/git
           key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-      
-      - name: Generate Cargo.lock
-        run: cargo generate-lockfile
-      
+
+      - name: Cache target directory
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: ${{ runner.os }}-target-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install cross
-        run: cargo install cross --git https://github.com/cross-rs/cross
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
       
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
@@ -105,10 +110,7 @@ jobs:
         with:
           path: ~/.cargo/git
           key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-      
-      - name: Generate Cargo.lock
-        run: cargo generate-lockfile
-      
+
       - name: Build release
         shell: bash
         run: |
