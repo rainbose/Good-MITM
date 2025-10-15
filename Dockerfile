@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y build-essential curl musl-tools upx pkg
 WORKDIR /root/good-mitm
 ADD . .
 
-RUN rustup install nightly && rustup default nightly && \
+RUN rustup install nightly-2024-01-01 && rustup default nightly-2024-01-01 && \
     case "$TARGETARCH" in \
     "amd64") \
         RUST_TARGET="x86_64-unknown-linux-musl" \
