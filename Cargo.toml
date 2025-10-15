@@ -20,7 +20,6 @@ codegen-units = 1
 [dependencies]
 mitm-core = { path = "crates/core", package = "good-mitm-core" }
 rule = { path = "crates/rule", package = "good-mitm-rule" }
-
 anyhow = "1.0"
 clap = { version = "4", features = ["derive"] }
 thiserror = "1"
@@ -33,6 +32,10 @@ rustls-pemfile = "1.0"
 tokio = { version = "1", features = ["rt-multi-thread", "signal"] }
 rustls = "0.21"
 trust_cert = { path = "crates/trust_cert", optional = true }
+
+# 添加这部分 - 强制使用新版本的 time crate
+[patch.crates-io]
+time = { version = "0.3.36" }
 
 [features]
 default = []
