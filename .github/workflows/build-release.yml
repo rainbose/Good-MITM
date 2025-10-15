@@ -52,8 +52,7 @@ jobs:
               compile_compress="-u"
             fi
           fi
-          cd build
-          ./build-release.sh -t ${{ matrix.target }} $compile_features $compile_compress
+          ./build/build-release.sh -t ${{ matrix.target }} $compile_features $compile_compress
       
       - name: Upload Github Assets
         uses: softprops/action-gh-release@v1
