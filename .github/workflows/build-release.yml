@@ -22,8 +22,10 @@ jobs:
           - aarch64-unknown-linux-musl
     steps:
       - uses: actions/checkout@v2
+      
       - name: Install dependences
         run: sudo apt-get update -y && sudo apt-get install -y upx;
+      
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -32,8 +34,13 @@ jobs:
           toolchain: nightly
           default: true
           override: true
+      
+      - name: Generate Cargo.lock
+        run: cargo generate-lockfile
+      
       - name: Install cross
         run: cargo install cross --git https://github.com/cross-rs/cross
+      
       - name: Build ${{ matrix.target }}
         timeout-minutes: 120
         env:
@@ -47,6 +54,7 @@ jobs:
           fi
           cd build
           ./build-release.sh -t ${{ matrix.target }} $compile_features $compile_compress
+      
       - name: Upload Github Assets
         uses: softprops/action-gh-release@v1
         env:
@@ -54,6 +62,7 @@ jobs:
         with:
           files: build/release/*
           prerelease: ${{ contains(github.ref, '-') }}
+          
   build-unix:
     runs-on: ${{ matrix.os }}
     env:
@@ -66,11 +75,13 @@ jobs:
           - aarch64-apple-darwin
     steps:
       - uses: actions/checkout@v2
+      
       - name: Install Dependences
         if: runner.os == 'macOS'
         run: |
           brew install gnu-tar pkg-config openssl
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
+      
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -79,10 +90,15 @@ jobs:
           toolchain: nightly
           default: true
           override: true
+      
+      - name: Generate Cargo.lock
+        run: cargo generate-lockfile
+      
       - name: Build release
         shell: bash
         run: |
           ./build/build-host-release.sh -t ${{ matrix.target }}
+      
       - name: Upload Github Assets
         uses: softprops/action-gh-release@v1
         env:
